@@ -1,11 +1,10 @@
 @import "../../node_modules/bootstrap/scss/functions";
 @import './utils/variables';
 
+@import './base/reset';
 
-@import './layout/header.scss';
-@import './layout/footer.scss';
-
-
-@import './pages/index.scss';
+@import './pages/_index.scss';
+@import './pages/_admin.scss';
 
 @import "../../node_modules/bootstrap";
+@import "../../node_modules/c3/c3.min.css";
