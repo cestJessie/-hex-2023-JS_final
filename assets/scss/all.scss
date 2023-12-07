@@ -1,7 +1,7 @@
 @import "../../node_modules/bootstrap/scss/functions";
 @import './utils/variables';
 
-@import './base/reset';
+@import './base/_reset';
 
 @import './pages/_index.scss';
 @import './pages/_admin.scss';
