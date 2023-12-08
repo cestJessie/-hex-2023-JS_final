@@ -1,5 +1,8 @@
+import axios from "axios";
 import { toThousands } from "./utils";
 import { api_path } from "./config";
+import validate from "validate.js";
+
 
 
 const baseUrl = `https://livejs-api.hexschool.io/api/livejs/v1/customer/${api_path}`;
@@ -98,6 +101,7 @@ productList.addEventListener('click', (e) => {
   let url = `${baseUrl}/carts`;
   axios.post(url, addData)
     .then((response) => {
+      alert('成功加入購物車')
       getCartList();
     })
     .catch((error) => {
@@ -193,39 +197,101 @@ function deleteAllCartItem() {
 // 用戶須滿足兩條件：
 // 1. 詳填訂單資訊
 // 2. 購物車有品項
-const orderInfoBtn = document.querySelector('.orderInfo-btn');
-orderInfoBtn.addEventListener('submit', (e) => {
+const orderInfoBtn = document.querySelector(".orderInfo-btn");
+
+orderInfoBtn.addEventListener("click", (e) => {
   e.preventDefault();
+  if (orderFormValidation()) {
+    return;
+  };
   const customerName = document.querySelector("#customerName");
   const customerPhone = document.querySelector("#customerPhone");
   const customerEmail = document.querySelector("#customerEmail");
   const customerAddress = document.querySelector("#customerAddress");
   const tradeWay = document.querySelector("#tradeWay");
 
-  let url = `${baseUrl}/orders`;
   axios
-    .post(url, {
+    .post(`${baseUrl}/orders`, {
       "data": {
         "user": {
           "name": customerName.value,
           "tel": customerPhone.value,
           "email": customerEmail.value,
           "address": customerAddress.value,
-          "payment": tradeWay.value
+          "payment": tradeWay.value,
         }
       }
     })
     .then((response) => {
       alert("訂單建立成功");
+      //clearInputs(inputs);
       orderForm.reset();
       getCartList();
     })
     .catch((error) => {
       console.log(error);
     });
-})
+});
 
 
 // 表單清空
 const orderForm = document.querySelector(".orderInfo-form");
 orderForm.reset();
+
+
+//驗證功能
+const orderInfoForm = document.querySelector('#orderInfo');
+const inputsOrder = document.querySelectorAll("input[type=text],input[type=tel],input[type=email]");
+const constraints = {
+  姓名: {
+    presence: {
+      allowEmpty: false,
+      message: "為必填欄位"
+    }
+  },
+  電話: {
+    presence: {
+      allowEmpty: false,
+      message: "為必填欄位"
+    },
+    format: {
+      pattern: /^[0-9\-\+\s]+$/,
+      message: "必須為有效的電話號碼格式"
+    }
+  },
+  Email: {
+    presence: {
+      allowEmpty: false,
+      message: "為必填欄位"
+    },
+    email: {
+      message: "必須為有效的電子郵件格式"
+    }
+  },
+  寄送地址: {
+    presence: {
+      allowEmpty: false,
+      message: "為必填欄位"
+    },
+    format: {
+      pattern: /[^]{3,}/,
+      message: "必須為有效的地址格式"
+    }
+  },
+};
+
+function orderFormValidation() {
+  inputsOrder.forEach((item) => {
+    // 預設為空值不顯示
+    item.nextElementSibling.textContent = "";
+    // 驗證回傳的內容
+    let errors = validate(orderInfoForm, constraints);
+    console.log(orderInfoForm);
+    // 渲染畫面
+    if (errors) {
+      Object.keys(errors).forEach((keys) => {
+        document.querySelector(`[data-message="${keys}"]`).textContent = errors[keys];
+      });
+    }
+  });
+};
