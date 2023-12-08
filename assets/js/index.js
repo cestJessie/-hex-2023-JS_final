@@ -1,5 +1,5 @@
 import { toThousands } from "./utils";
-import { api_path, token } from "./config";
+import { api_path } from "./config";
 
 
 const baseUrl = `https://livejs-api.hexschool.io/api/livejs/v1/customer/${api_path}`;
@@ -33,6 +33,7 @@ function getProductList() {
       console.log(error);
     });
 }
+
 
 // 組合productList render字串
 function buildProductListHTML(item) {
